@@ -1,6 +1,26 @@
 #!/usr/bin/env node
 
-// Supported operations: addition (+), subtraction (-), multiplication (*), and division (/).
+// Supported operations: addition (+), subtraction (-), multiplication (*), division (/), modulo (%), power (**), and square root (sqrt).
+function modulo(leftOperand, rightOperand) {
+  if (rightOperand === 0) {
+    throw new Error('Modulo by zero is not allowed.');
+  }
+
+  return leftOperand % rightOperand;
+}
+
+function power(base, exponent) {
+  return base ** exponent;
+}
+
+function squareRoot(value) {
+  if (value < 0) {
+    throw new Error('Cannot calculate the square root of a negative number.');
+  }
+
+  return Math.sqrt(value);
+}
+
 function calculate(leftOperand, operator, rightOperand) {
   switch (operator) {
     case '+':
@@ -15,6 +35,12 @@ function calculate(leftOperand, operator, rightOperand) {
       }
 
       return leftOperand / rightOperand;
+    case '%':
+      return modulo(leftOperand, rightOperand);
+    case '**':
+      return power(leftOperand, rightOperand);
+    case 'sqrt':
+      return squareRoot(leftOperand);
     default:
       throw new Error(`Unsupported operation: ${operator}`);
   }
@@ -35,10 +61,19 @@ function parseOperand(value) {
 }
 
 function run(argumentsList) {
+  if (argumentsList[0] === 'sqrt') {
+    if (argumentsList.length !== 2) {
+      throw new Error('Usage: node src/calculator.js sqrt <number>');
+    }
+
+    console.log(squareRoot(parseOperand(argumentsList[1])));
+    return;
+  }
+
   const [leftValue, operator, rightValue] = argumentsList;
 
   if (argumentsList.length !== 3) {
-    throw new Error('Usage: node src/calculator.js <number> <+|-|*|/> <number>');
+    throw new Error('Usage: node src/calculator.js <number> <+|-|*|/|%|**> <number>');
   }
 
   const result = calculate(parseOperand(leftValue), operator, parseOperand(rightValue));
@@ -54,4 +89,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { calculate, parseOperand, run };
+module.exports = { calculate, modulo, parseOperand, power, run, squareRoot };
